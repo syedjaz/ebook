@@ -1,3 +1,37 @@
+<?php
+require 'config.php';
+
+
+if(isset($_POST['login'])){
+
+  $username = $_POST['username'];
+  $user = mysqli_real_escape_string($con,$username);
+  $password = $_POST['password'];
+  $pass = mysqli_real_escape_string($con,$password);
+
+  $fetch_sql = "SELECT * FROM admin WHERE a_name = '{$user}' AND a_password='{$pass}'";
+  $res = mysqli_query($con,$fetch_sql);
+
+  $total_rows = mysqli_num_rows($res);
+  if($total_rows!=0){
+    while($data = mysqli_fetch_assoc($res)){
+      $_SESSION['username'] = $data['a_name'];
+      $_SESSION['profile'] = $data['img'];
+      $_SESSION['user_email'] = $data['a_email'];
+    }
+  }
+  if($res){
+    echo "<script>window.location.href = 'http://localhost:82/ebook_project/admin/dashboard.php'</script>";
+
+  }
+
+}
+
+
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,7 +98,7 @@
                     <p class="text-center small">Enter your username & password to login</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
+                  <form class="row g-3 needs-validation" novalidate method="POST">
 
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Username</label>
@@ -88,7 +122,7 @@
                       </div>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                      <button class="btn btn-primary w-100" type="submit" name="login">Login</button>
                     </div>
                     <div class="col-12">
                       <p class="small mb-0">Don't have account? <a href="register.php">Create an account</a></p>

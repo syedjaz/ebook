@@ -1,3 +1,50 @@
+<?php
+require 'config.php';
+if(isset($_POST['register'])){
+$username = $_POST['username'];
+$email = $_POST['email'];
+$password = $_POST['password'];
+if(isset($_FILES['profile'])){
+
+            $errors = array();
+            $filename = rand(1001,1022).$_FILES['profile']['name'];
+            $tmpname = $_FILES['profile']['tmp_name'];
+            $size = $_FILES['profile']['size'];
+            $filetype = $_FILES['profile']['type'];
+            $extension = array('jpg','jpeg','png','jfif');
+            $file = explode('.',$filename);
+            // echo "<pre>";
+            // print_r($file);
+            // echo "</pre>";
+            $file_ext = end($file);
+            // echo $filename;
+            // echo $file_ext;
+
+            if(in_array($file_ext,$extension)===false){
+               $errors[] = "";
+            }
+            if($size > 3145728){
+               $errors[] = "";
+            }
+
+            if(empty($errors)==true){
+              move_uploaded_file($tmpname,'media/'.$filename);
+            }
+            else if(empty($errors)==false){
+                echo "<script>alert('Please check file size or format');</script>";
+                echo "<script>window.location.href = 'http://localhost:82/ebook_project/admin/register.php';</script>";
+                die();
+            }
+}
+$admin_sql = "INSERT INTO admin(a_name,a_email,a_password,img) VALUES('{$username}','{$email}','{$password}','{$filename}')";
+$res = mysqli_query($con,$admin_sql);
+if($res){
+  echo "<script>window.location.href = 'http://localhost:82/ebook_project/admin/index.php'</script>";
+}
+}
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,20 +111,8 @@
                     <p class="text-center small">Enter your personal details to create account</p>
                   </div>
 
-                  <form class="row g-3 needs-validation" novalidate>
-                    <div class="col-12">
-                      <label for="yourName" class="form-label">Your Name</label>
-                      <input type="text" name="name" class="form-control" id="yourName" required>
-                      <div class="invalid-feedback">Please, enter your name!</div>
-                    </div>
-
-                    <div class="col-12">
-                      <label for="yourEmail" class="form-label">Your Email</label>
-                      <input type="email" name="email" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
-                    </div>
-
-                    <div class="col-12">
+                  <form class="row g-3 needs-validation" novalidate method="POST" enctype="multipart/form-data">
+                       <div class="col-12">
                       <label for="yourUsername" class="form-label">Username</label>
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
@@ -86,6 +121,17 @@
                       </div>
                     </div>
 
+                    <div class="col-12">
+                      <label for="yourEmail" class="form-label">Your Email</label>
+                      <input type="email" name="email" class="form-control" id="yourEmail" required>
+                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                    </div>
+                    <div class="col-12">
+                      <label for="yourEmail" class="form-label">Profile</label>
+                      <input type="file" name="profile" class="form-control" id="yourEmail">
+                      
+                    </div>
+                   
                     <div class="col-12">
                       <label for="yourPassword" class="form-label">Password</label>
                       <input type="password" name="password" class="form-control" id="yourPassword" required>
@@ -100,10 +146,10 @@
                       </div>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
+                      <button class="btn btn-primary w-100" type="submit" name="register">Create Account</button>
                     </div>
                     <div class="col-12">
-                      <p class="small mb-0">Already have an account? <a href="pages-login.html">Log in</a></p>
+                      <p class="small mb-0">Already have an account? <a href="index.php">Log in</a></p>
                     </div>
                   </form>
 
