@@ -1,6 +1,8 @@
   <?php
   require 'config.php';
-  
+  if(!isset($_SESSION['username'])){
+    header('Location:http://localhost:82/ebook_project/admin/');
+  }
   ?>
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
